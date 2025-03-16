@@ -15,7 +15,7 @@
 #'   z-scores or PIPs.
 #'
 #' @param y A string indicating what to plot: either \code{"z_original"} for
-#'   z-scores, \code{"z"} for z-score derived p-values on (base-10) log-scale, 
+#'   z-scores, \code{"z"} for z-score derived p-values on (base-10) log-scale,
 #'   \code{"PIP"} for posterior inclusion probabilities,
 #'   \code{"log10PIP"} for posterior inclusion probabiliities on the
 #'   (base-10) log-scale. For any other setting, the data are plotted as
@@ -49,9 +49,9 @@
 #'   \code{\link[graphics]{plot}}.
 #'
 #' @return Invisibly returns \code{NULL}.
-#' 
+#'
 #' @seealso \code{\link{susie_plot_changepoint}}
-#' 
+#'
 #' @examples
 #' set.seed(1)
 #' n = 1000
@@ -132,7 +132,7 @@ susie_plot = function (model, y, add_bar = FALSE, pos = NULL, b = NULL,
     if (is_susie)
       p = log10(model$pip)
     else
-     p = log10(model)
+      p = log10(model)
     ylab = "log10(PIP)"
   } else {
     if (is_susie)
@@ -173,11 +173,11 @@ susie_plot = function (model, y, add_bar = FALSE, pos = NULL, b = NULL,
     end_adj = max(max(model[[pos$attr]]) - pos$end,0)
     pos = (1 + start_adj):(length(p) - end_adj)
   } else {
-    if (!all(pos %in% 1:length(p))) 
+    if (!all(pos %in% 1:length(p)))
       stop("Provided position is outside the range of variables")
     pos_with_value = 1:length(p)
   }
-  legend_text = list(col = vector(),purity = vector(),size = vector())
+  legend_text = list(name = vector(),col = vector(),purity = vector(),size = vector())
   # scipen0 = options()$scipen
   # options(scipen = 10)
   args = list(...)
@@ -197,7 +197,7 @@ susie_plot = function (model, y, add_bar = FALSE, pos = NULL, b = NULL,
         y1 = p[x0]
       } else if (n_in_CS(model, model$sets$requested_coverage)[i] < max_cs) {
         x0 = intersect(pos,
-               pos[pos_with_value][which(in_CS(model,model$sets$requested_coverage)[i,] > 0)])
+                       pos[pos_with_value][which(in_CS(model,model$sets$requested_coverage)[i,] > 0)])
         y1 = p[x0]
       } else {
         x0 = NULL
@@ -211,6 +211,7 @@ susie_plot = function (model, y, add_bar = FALSE, pos = NULL, b = NULL,
         segments(x0+start,y0,x1+start,y1,lwd = 1.5,col = "gray")
       }
       points(x0+start,y1,col = head(color,1),cex = 1.5,lwd = 2.5)
+      legend_text$name = append(paste0("L",i), legend_text$name)
       legend_text$col = append(head(color,1), legend_text$col)
 
       # Rotate color.
@@ -225,15 +226,15 @@ susie_plot = function (model, y, add_bar = FALSE, pos = NULL, b = NULL,
       text = vector()
       for (i in 1:length(legend_text$col)) {
         if (legend_text$size[i] == 1)
-          text[i] = paste0("L",i,": C=1")
+          text[i] = paste0(legend_text$name[i],": C=1")
         else
-          text[i] = paste0("L",i,": C=",legend_text$size[i],"/R=",
+          text[i] = paste0(legend_text$name[i],": C=",legend_text$size[i],"/R=",
                            legend_text$purity[i])
       }
-      if (!(add_legend %in% c("bottomright", "bottom", "bottomleft", "left", 
-        "topleft", "top", "topright", "right", "center"))) {
-          add_legend = "topright"
-        }
+      if (!(add_legend %in% c("bottomright", "bottom", "bottomleft", "left",
+                              "topleft", "top", "topright", "right", "center"))) {
+        add_legend = "topright"
+      }
       legend(add_legend,text,bty = "n",col = legend_text$col,cex = 0.65,
              pch = 15)
     }
